@@ -53,9 +53,10 @@ Sub Globals
 	Private Reculer As Button
 	Private Droite As Button
 	Private Gauche As Button
-	Private UNOEVO As ImageView
 	Private AvancerDroite As Button
 	Private AvancerGauche As Button
+	Private Lampe As Button
+	Private Warning As ImageView
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -193,6 +194,30 @@ End Sub
 
 Sub AvancerDroite_Up
 	message="X"
+	Donnee=bc.StringToBytes(message,"ASCII")
+	Flux.Write(Donnee)
+End Sub
+
+Sub Lampe_Click
+	message="R"
+	Donnee=bc.StringToBytes(message,"ASCII")
+	Flux.Write(Donnee)
+End Sub
+
+Sub Warning_Click
+	message="F"
+	Donnee=bc.StringToBytes(message,"ASCII")
+	Flux.Write(Donnee)
+End Sub
+
+Sub ClignotantGauche_Click
+	message="G"
+	Donnee=bc.StringToBytes(message,"ASCII")
+	Flux.Write(Donnee)
+End Sub
+
+Sub ClignotantDroite_Click
+	message="T"
 	Donnee=bc.StringToBytes(message,"ASCII")
 	Flux.Write(Donnee)
 End Sub

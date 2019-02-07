@@ -7,9 +7,12 @@
 #define commande_moteur_horaire2 6 //Grove relay
 #define commande_moteur_antihoraire 5 //Grove relay
 #define commande_moteur_antihoraire2 7 //Grove relay
-#define RX 2 //Grove bluetooth //Broche A3
-#define TX 3 // Grove bluetooth //Broche A4
-#define servomoteur 9 // Grove bluetooth //Broche A4
+#define RX 2 //Grove bluetooth 
+#define TX 3 // Grove bluetooth
+#define servomoteur 9
+#define cligno_gauche 10
+#define cligno_droite 11
+#define lampe 14 
 
 SoftwareSerial mySerial(RX,TX);
 Servo monServomoteur;
@@ -18,6 +21,12 @@ Servo monServomoteur;
 char bluetooth;
 int commande_bluetooth;
 int val_servo=45;
+boolean etat_lampe=0;
+boolean etat_cligno_gauche=0;
+boolean etat_cligno_droite=0;
+boolean etat_warning=0;
+boolean etat_cligno=0;
+unsigned long timer0=0;
 
 void setup()
 {
@@ -28,6 +37,10 @@ void setup()
     pinMode(commande_moteur_horaire2, OUTPUT);
     pinMode(commande_moteur_antihoraire, OUTPUT);
     pinMode(commande_moteur_antihoraire2, OUTPUT);
+
+    pinMode(lampe, OUTPUT);
+    pinMode(cligno_gauche, OUTPUT);
+    pinMode(cligno_droite, OUTPUT);
 
 	monServomoteur.attach(servomoteur);	
 }
@@ -42,6 +55,7 @@ void loop()
     if (mySerial.available()>0)
     {
       bluetooth = mySerial.read() ;
+//      Serial.println(bluetooth);
       if (bluetooth == 'Z') //avancer
       {
         commande_bluetooth = 1;
@@ -78,6 +92,28 @@ void loop()
 	  else if (bluetooth == 'X') // STOP
       {
         commande_bluetooth = 0;
+      }
+      else if (bluetooth == 'R') // Lampe
+      {
+        etat_lampe= !etat_lampe;
+      }
+      else if (bluetooth == 'F') // Warning
+      {
+       etat_warning= !etat_warning;
+       etat_cligno_gauche=0;
+       etat_cligno_droite=0;
+      }
+      else if (bluetooth == 'G') // Clignotant Gauche
+      {
+        etat_cligno_gauche= !etat_cligno_gauche;
+        etat_cligno_droite=0;
+        etat_warning=0;
+      }
+      else if (bluetooth == 'T') // Clignotant Droite
+      {
+        etat_cligno_droite = !etat_cligno_droite;
+        etat_cligno_gauche=0;
+        etat_warning=0;
       }
     }
     
@@ -167,6 +203,54 @@ void loop()
           val_servo+=5;
         }
     }
+
+    //Commande lampe
+    if(etat_lampe==1)
+    {
+      digitalWrite(lampe, HIGH);
+    }
+   else
+    {
+      digitalWrite(lampe, LOW);
+    }
+
+    //Commande cligno
+   if(etat_warning==1)
+    {
+      if (millis() - timer0 >=1000)
+      {
+        etat_cligno=!etat_cligno;
+        digitalWrite(cligno_gauche, etat_cligno);
+        digitalWrite(cligno_droite, etat_cligno);
+        timer0=millis();
+      }
+    }
+    else if(etat_cligno_gauche==1)
+    {
+      if (millis() - timer0 >=1000)
+      {
+        etat_cligno=!etat_cligno;
+        digitalWrite(cligno_gauche, etat_cligno);
+        timer0=millis();
+      }
+      digitalWrite(cligno_droite, LOW);
+    }
+    else if(etat_cligno_droite==1)
+    {
+      if (millis() - timer0 >=1000)
+      {
+        etat_cligno=!etat_cligno;
+        digitalWrite(cligno_droite, etat_cligno);
+        timer0=millis();
+      }
+      digitalWrite(cligno_gauche, LOW);
+    }
+   else
+    {
+      digitalWrite(cligno_droite, LOW);
+      digitalWrite(cligno_gauche, LOW);
+    }
+    
   monServomoteur.write(val_servo);
   //Serial.println(val_servo);
 }
