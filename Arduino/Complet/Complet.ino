@@ -9,10 +9,10 @@
 #define commande_moteur_antihoraire2 7 //Grove relay
 #define RX 2 //Grove bluetooth 
 #define TX 3 // Grove bluetooth
-#define servomoteur 9
-#define cligno_gauche 10
-#define cligno_droite 11
-#define lampe 14 
+#define servomoteur 8
+#define cligno_gauche 15 //A1
+#define cligno_droite 16 //A2
+#define lampe 14 //A0
 
 SoftwareSerial mySerial(RX,TX);
 Servo monServomoteur;
