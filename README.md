@@ -2,7 +2,7 @@
 
 ## Logiciels
 | Arduino | Fritzing | B4A |
-| :-----: | :------: | :-----: | :---------: | :-------: |
+| :-----: | :------: | :-----: |
 | ![](/icone/Arduino.png) | ![](/icone/Fritzing.png) | ![](/icone/B4A.png) |
 
 ## Composants
