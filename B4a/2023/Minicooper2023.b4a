@@ -1,0 +1,294 @@
+﻿Build1=Default,anywheresoftware.b4a.samples.serial
+Build2=minicooper2023,anywheresoftware.b4a.samples.minicooper2023
+File1=1.bal
+File10=haut droite.jpg
+File11=haut gauche.jpg
+File12=haut.png
+File13=Minicooper.jpg
+File14=Module grove bluetooth.png
+File15=noBle.png
+File16=picto-phare.png
+File17=warning.jpg
+File2=bas droite.jpg
+File3=bas gauche.jpg
+File4=bas.png
+File5=ble.png
+File6=clignotant droite.png
+File7=clignotant gauche.png
+File8=droite.png
+File9=gauche.png
+FileGroup1=Default Group
+FileGroup10=Default Group
+FileGroup11=Default Group
+FileGroup12=Default Group
+FileGroup13=Default Group
+FileGroup14=Default Group
+FileGroup15=Default Group
+FileGroup16=Default Group
+FileGroup17=Default Group
+FileGroup2=Default Group
+FileGroup3=Default Group
+FileGroup4=Default Group
+FileGroup5=Default Group
+FileGroup6=Default Group
+FileGroup7=Default Group
+FileGroup8=Default Group
+FileGroup9=Default Group
+Group=Default Group
+Library1=core
+Library2=serial
+ManifestCode=
+NumberOfFiles=17
+NumberOfLibraries=2
+NumberOfModules=0
+Version=12.5
+@EndOfDesignText@
+#Region Module Attributes
+	#FullScreen: True
+	#IncludeTitle: True
+	#ApplicationLabel: Minicooper 2023
+	#VersionCode: 1
+	#VersionName: 
+	#SupportedOrientations: portrait
+#End Region
+
+'Activity module
+Sub Process_Globals
+	Dim Serial1 As Serial
+	Dim TextReader1 As TextReader
+	Dim TextWriter1 As TextWriter
+	Dim Timer1 As Timer
+	Dim connected As Boolean
+End Sub
+
+Sub Globals
+	Dim mnuConnect As Button
+	Dim mnuDisconnect As Button
+	
+	Private Avancer As Button
+	Private Reculer As Button
+	Private Droite As Button
+	Private Gauche As Button
+	
+	Private AvancerDroite As Button
+	Private AvancerGauche As Button
+	Private ReculerDroite As Button
+	Private ReculerGauche As Button
+	
+	Private ClignotantDroite As Button
+	Private ClignotantGauche As Button
+	
+	Private Lampe As Button
+	
+	Private Warning As ImageView
+End Sub
+
+Sub Activity_Create(FirstTime As Boolean)
+	If FirstTime Then
+		Serial1.Initialize("Serial1")
+		Timer1.Initialize("Timer1", 200)
+	End If
+	Activity.LoadLayout("1")
+	'Activity.AddMenuItem("Connect", "mnuConnect")
+	'Activity.AddMenuItem("Disconnect", "mnuDisconnect")
+End Sub
+Sub Activity_Resume
+	If Serial1.IsEnabled = False Then
+		Msgbox("Please enable Bluetooth.", "")
+	Else
+		Serial1.Listen 'listen for incoming connections
+	End If
+End Sub
+Sub mnuConnect_Click
+	Dim PairedDevices As Map
+	PairedDevices = Serial1.GetPairedDevices
+	Dim l As List
+	l.Initialize
+	For i = 0 To PairedDevices.Size - 1
+		l.Add(PairedDevices.GetKeyAt(i))
+	Next
+	Dim res As Int
+	res = InputList(l, "Choose device", -1) 'show list with paired devices
+	If res <> DialogResponse.CANCEL Then
+		Serial1.Connect(PairedDevices.Get(l.Get(res))) 'convert the name to mac address
+	End If
+End Sub
+
+Sub Serial1_Connected (Success As Boolean)
+	If Success Then
+		ToastMessageShow("Connected successfully", False)
+		TextReader1.Initialize(Serial1.InputStream)
+		TextWriter1.Initialize(Serial1.OutputStream)
+		Timer1.Enabled = True
+		connected = True
+	Else
+		connected = False
+		Timer1.Enabled = False
+		Msgbox(LastException.Message, "Error connecting.")
+	End If
+End Sub
+Sub mnuDisconnect_Click
+	Serial1.Disconnect
+	connected = False
+End Sub
+
+Sub Activity_Pause (UserClosed As Boolean)
+
+End Sub
+
+
+Sub Timer1_Tick
+	If connected Then
+		If TextReader1.Ready Then 'check if there is any data waiting to be read
+
+		End If
+	End If
+End Sub
+
+Private Sub ButtonRecuCapteur_Click
+	If connected Then
+		TextWriter1.WriteLine("")
+		TextWriter1.Flush
+	End If
+End Sub
+
+Sub Avancer_Down
+	If connected Then
+		TextWriter1.WriteLine("Z")
+		TextWriter1.Flush
+	End If
+End Sub
+
+Sub Avancer_Up
+	If connected Then
+		TextWriter1.WriteLine("X")
+		TextWriter1.Flush
+	End If
+End Sub
+
+
+Sub Reculer_Down
+	If connected Then
+		TextWriter1.WriteLine("S")
+		TextWriter1.Flush
+	End If
+End Sub
+
+Sub Reculer_Up
+	If connected Then
+		TextWriter1.WriteLine("X")
+		TextWriter1.Flush
+	End If
+End Sub
+
+Sub Gauche_Down
+	If connected Then
+		TextWriter1.WriteLine("Q")
+		TextWriter1.Flush
+	End If
+End Sub
+
+Sub Gauche_Up
+	If connected Then
+		TextWriter1.WriteLine("X")
+		TextWriter1.Flush
+	End If
+End Sub
+
+Sub Droite_Down
+	If connected Then
+		TextWriter1.WriteLine("D")
+		TextWriter1.Flush
+	End If
+End Sub
+
+Sub Droite_Up
+	If connected Then
+		TextWriter1.WriteLine("X")
+		TextWriter1.Flush
+	End If
+End Sub
+
+Sub ReculerGauche_Down
+	If connected Then
+		TextWriter1.WriteLine("W")
+		TextWriter1.Flush
+	End If
+End Sub
+
+Sub ReculerGauche_Up
+	If connected Then
+		TextWriter1.WriteLine("X")
+		TextWriter1.Flush
+	End If
+End Sub
+
+Sub ReculerDroite_Down
+	If connected Then
+		TextWriter1.WriteLine("C")
+		TextWriter1.Flush
+	End If
+End Sub
+
+Sub ReculerDroite_Up
+	If connected Then
+		TextWriter1.WriteLine("X")
+		TextWriter1.Flush
+	End If
+End Sub
+
+Sub AvancerGauche_Down
+	If connected Then
+		TextWriter1.WriteLine("A")
+		TextWriter1.Flush
+	End If
+End Sub
+
+Sub AvancerGauche_Up
+	If connected Then
+		TextWriter1.WriteLine("X")
+		TextWriter1.Flush
+	End If
+End Sub
+
+Sub AvancerDroite_Down
+	If connected Then
+		TextWriter1.WriteLine("E")
+		TextWriter1.Flush
+	End If
+End Sub
+
+Sub AvancerDroite_Up
+	If connected Then
+		TextWriter1.WriteLine("X")
+		TextWriter1.Flush
+	End If
+End Sub
+
+Sub Lampe_Click
+	If connected Then
+		TextWriter1.WriteLine("R")
+		TextWriter1.Flush
+	End If
+End Sub
+
+Sub Warning_Click
+	If connected Then
+		TextWriter1.WriteLine("F")
+		TextWriter1.Flush
+	End If
+End Sub
+
+Sub ClignotantGauche_Click
+	If connected Then
+		TextWriter1.WriteLine("G")
+		TextWriter1.Flush
+	End If
+End Sub
+
+Sub ClignotantDroite_Click
+	If connected Then
+		TextWriter1.WriteLine("T")
+		TextWriter1.Flush
+	End If
+End Sub
